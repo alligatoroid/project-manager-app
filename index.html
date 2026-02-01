@@ -361,6 +361,41 @@
         let textBeforeRecording = '';
         let finalTranscript = '';
 
+        // Convert spoken punctuation to symbols
+        function processPunctuation(text) {
+            return text
+                // Punctuation - spoken to symbol
+                .replace(/\b(period|full stop)\b/gi, '.')
+                .replace(/\bcomma\b/gi, ',')
+                .replace(/\bquestion mark\b/gi, '?')
+                .replace(/\bexclamation (point|mark)\b/gi, '!')
+                .replace(/\bcolon\b/gi, ':')
+                .replace(/\bsemicolon\b/gi, ';')
+                .replace(/\bhyphen\b/gi, '-')
+                .replace(/\bdash\b/gi, '—')
+                .replace(/\bellipsis\b/gi, '...')
+                .replace(/\bopen (paren|parenthesis)\b/gi, '(')
+                .replace(/\bclose (paren|parenthesis)\b/gi, ')')
+                .replace(/\bopen quote\b/gi, '"')
+                .replace(/\bclose quote\b/gi, '"')
+                .replace(/\bquote\b/gi, '"')
+                .replace(/\bapostrophe\b/gi, "'")
+                .replace(/\bampersand\b/gi, '&')
+                .replace(/\bat sign\b/gi, '@')
+                .replace(/\bhashtag\b/gi, '#')
+                .replace(/\bdollar sign\b/gi, '$')
+                .replace(/\bpercent sign\b/gi, '%')
+                // New line / paragraph
+                .replace(/\bnew line\b/gi, '\n')
+                .replace(/\bnew paragraph\b/gi, '\n\n')
+                // Clean up spaces before punctuation
+                .replace(/ +([.,!?:;])/g, '$1')
+                // Capitalize after sentence-ending punctuation
+                .replace(/([.!?]\s*)([a-z])/g, (m, p, c) => p + c.toUpperCase())
+                // Capitalize first letter
+                .replace(/^([a-z])/, (m, c) => c.toUpperCase());
+        }
+
         // Initialize Speech Recognition
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -385,9 +420,10 @@
                     finalTranscript += event.results[i][0].transcript;
                 }
 
-                // Append to existing text
+                // Process punctuation and append to existing text
+                const processed = processPunctuation(finalTranscript);
                 const separator = textBeforeRecording ? ' ' : '';
-                noteInput.value = textBeforeRecording + separator + finalTranscript;
+                noteInput.value = textBeforeRecording + separator + processed;
                 updateSaveButton();
             };
 
@@ -407,8 +443,9 @@
 
             recognition.onend = () => {
                 // Keep only final transcript when recognition ends
-                const separator = textBeforeRecording && finalTranscript ? ' ' : '';
-                noteInput.value = textBeforeRecording + separator + finalTranscript;
+                const processed = processPunctuation(finalTranscript);
+                const separator = textBeforeRecording && processed ? ' ' : '';
+                noteInput.value = textBeforeRecording + separator + processed;
                 updateSaveButton();
 
                 if (isRecording) {
