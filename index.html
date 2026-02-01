@@ -358,31 +358,46 @@
         let notes = JSON.parse(localStorage.getItem('quickNotes') || '[]');
         let isRecording = false;
         let recognition = null;
+        let textBeforeRecording = '';
+        let finalTranscript = '';
 
         // Initialize Speech Recognition
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
-            recognition.continuous = true;
+            recognition.continuous = false; // Single utterance mode works better on mobile
             recognition.interimResults = true;
             recognition.lang = 'en-US';
 
             recognition.onstart = () => {
                 isRecording = true;
+                textBeforeRecording = noteInput.value;
+                finalTranscript = '';
                 voiceBtn.classList.add('recording');
                 voiceStatus.textContent = 'Listening...';
                 voiceStatus.classList.add('visible');
             };
 
             recognition.onresult = (event) => {
-                let transcript = '';
-                for (let i = 0; i < event.results.length; i++) {
-                    transcript += event.results[i][0].transcript;
+                let interimTranscript = '';
+
+                // Process results - separate final from interim
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript;
+                    } else {
+                        interimTranscript = transcript;
+                    }
                 }
-                noteInput.value = transcript;
+
+                // Build the complete text: existing + final + interim preview
+                const separator = textBeforeRecording && (finalTranscript || interimTranscript) ? ' ' : '';
+                noteInput.value = textBeforeRecording + separator + finalTranscript + interimTranscript;
                 updateSaveButton();
-                voiceStatus.textContent = 'Listening...';
+
+                voiceStatus.textContent = interimTranscript ? 'Listening...' : 'Processing...';
             };
 
             recognition.onerror = (event) => {
@@ -392,12 +407,23 @@
                     voiceStatus.textContent = 'Microphone access denied';
                     voiceStatus.classList.add('visible');
                     setTimeout(() => voiceStatus.classList.remove('visible'), 2000);
+                } else if (event.error === 'no-speech') {
+                    voiceStatus.textContent = 'No speech detected';
+                    voiceStatus.classList.add('visible');
+                    setTimeout(() => voiceStatus.classList.remove('visible'), 2000);
                 }
             };
 
             recognition.onend = () => {
+                // Keep only final transcript when recognition ends
+                const separator = textBeforeRecording && finalTranscript ? ' ' : '';
+                noteInput.value = textBeforeRecording + separator + finalTranscript;
+                updateSaveButton();
+
                 if (isRecording) {
-                    // Restart if still in recording mode (handles auto-stop)
+                    // Restart for next utterance - update base text to include what we captured
+                    textBeforeRecording = noteInput.value;
+                    finalTranscript = '';
                     try {
                         recognition.start();
                     } catch (e) {
