@@ -366,8 +366,8 @@
 
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
-            recognition.continuous = false; // Single utterance mode works better on mobile
-            recognition.interimResults = true;
+            recognition.continuous = false;
+            recognition.interimResults = false; // Disabled - mobile browsers handle interim poorly
             recognition.lang = 'en-US';
 
             recognition.onstart = () => {
@@ -375,29 +375,20 @@
                 textBeforeRecording = noteInput.value;
                 finalTranscript = '';
                 voiceBtn.classList.add('recording');
-                voiceStatus.textContent = 'Listening...';
+                voiceStatus.textContent = 'Listening... tap mic when done';
                 voiceStatus.classList.add('visible');
             };
 
             recognition.onresult = (event) => {
-                let interimTranscript = '';
-
-                // Process results - separate final from interim
+                // Only final results now (no interim)
                 for (let i = event.resultIndex; i < event.results.length; i++) {
-                    const transcript = event.results[i][0].transcript;
-                    if (event.results[i].isFinal) {
-                        finalTranscript += transcript;
-                    } else {
-                        interimTranscript = transcript;
-                    }
+                    finalTranscript += event.results[i][0].transcript;
                 }
 
-                // Build the complete text: existing + final + interim preview
-                const separator = textBeforeRecording && (finalTranscript || interimTranscript) ? ' ' : '';
-                noteInput.value = textBeforeRecording + separator + finalTranscript + interimTranscript;
+                // Append to existing text
+                const separator = textBeforeRecording ? ' ' : '';
+                noteInput.value = textBeforeRecording + separator + finalTranscript;
                 updateSaveButton();
-
-                voiceStatus.textContent = interimTranscript ? 'Listening...' : 'Processing...';
             };
 
             recognition.onerror = (event) => {
