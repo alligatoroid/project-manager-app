@@ -747,32 +747,21 @@
                 }
             };
 
-            recognition.onend = async () => {
+            recognition.onend = () => {
+                // Apply manual punctuation processing
+                const processed = processPunctuation(finalTranscript);
+                const separator = textBeforeRecording && processed ? ' ' : '';
+                noteInput.value = textBeforeRecording + separator + processed;
+                updateSaveButton();
+
                 if (isRecording) {
-                    // Still recording - restart for next utterance
-                    const processed = processPunctuation(finalTranscript);
-                    const separator = textBeforeRecording && processed ? ' ' : '';
-                    noteInput.value = textBeforeRecording + separator + processed;
-                    updateSaveButton();
+                    // Restart for next utterance
                     textBeforeRecording = noteInput.value;
                     finalTranscript = '';
                     try {
                         recognition.start();
                     } catch (e) {
                         stopRecording();
-                    }
-                } else {
-                    // Recording stopped - apply AI punctuation if enabled
-                    if (finalTranscript.trim()) {
-                        const separator = textBeforeRecording ? ' ' : '';
-                        const rawText = textBeforeRecording + separator + finalTranscript;
-
-                        if (useAiPunctuation && apiKey) {
-                            noteInput.value = await aiPunctuate(rawText);
-                        } else {
-                            noteInput.value = processPunctuation(rawText);
-                        }
-                        updateSaveButton();
                     }
                 }
             };
