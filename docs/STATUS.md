@@ -41,8 +41,9 @@ https://alligatoroid.github.io/project-manager-app/
 
 ## Next Steps (Not Started)
 From the original design, future phases include:
-1. Project organization (create projects, file notes into them)
-2. Task management with priorities and energy levels
+1. **Media capture** - Photo/video capture for visual project feedback (e.g., marked-up photos showing where welds should be added)
+2. Project organization (create projects, file notes into them)
+3. Task management with priorities and energy levels
 3. Time tracking (start/stop timer, manual entry)
 4. Reflection system with guided prompts
 5. AI task recommendations ("what should I work on?")

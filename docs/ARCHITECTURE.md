@@ -52,6 +52,22 @@ user-projects/
 - Display recent notes
 - Offline-capable
 
+## Media Capture Requirements
+
+Photo and video capture is essential for recording project feedback visually - for example, a marked-up photo showing where welds should be added to a planter, or a video demonstrating a technique.
+
+**Planned capabilities:**
+- Photo capture from camera or gallery
+- Video capture (short clips)
+- Attach media to notes with hashtag association
+- Store in project `media/` folders
+- Thumbnail previews in note list
+
+**Technical considerations:**
+- Use MediaDevices API for camera access
+- Store as base64 in localStorage for MVP (with size limits)
+- Future: migrate to IndexedDB or file system for larger media
+
 ## Flagged for Future
 
 - Visual dependency flowcharts
