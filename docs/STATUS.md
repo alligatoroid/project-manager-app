@@ -1,8 +1,8 @@
 # Project Status
 
-**Last Updated:** 2026-02-01
+**Last Updated:** 2026-02-02
 
-## Current State: Phase 1 MVP Complete
+## Current State: Phase 1 MVP + Media Capture
 
 The Quick Capture PWA is live and functional at:
 https://alligatoroid.github.io/project-manager-app/
@@ -67,3 +67,12 @@ Read these files to understand the project:
 ## API Key Note
 Settings screen stores Anthropic API key in localStorage for future AI features.
 The AI punctuation feature was disabled - using manual spoken punctuation for now.
+
+## Recent Session (2026-02-02)
+- Added photo and video capture functionality
+- Camera button next to voice button for quick media capture
+- Supports front/rear camera switching, gallery selection
+- Videos limited to 30 seconds for storage constraints
+- Media stored as base64 in localStorage with auto-cleanup when quota exceeded
+- Fixed CSS conflict where voice button's fixed positioning was hiding the camera button
+- Resolved GitHub Actions deployment failure (runner availability issue, required manual re-run)
