@@ -11,7 +11,11 @@ https://alligatoroid.github.io/project-manager-app/
 - Mobile-first text input with hashtag detection
 - Voice input via Web Speech API
 - Spoken punctuation ("period", "comma", "question mark", etc.)
-- Notes saved to localStorage
+- **Photo capture** from camera or gallery
+- **Video capture** (up to 30 seconds) with recording timer
+- Media attached to notes with thumbnail previews
+- Full-screen media viewer
+- Notes saved to localStorage (with automatic cleanup for storage limits)
 - Offline-capable PWA
 - Settings screen with API key storage (for future AI features)
 
@@ -41,9 +45,8 @@ https://alligatoroid.github.io/project-manager-app/
 
 ## Next Steps (Not Started)
 From the original design, future phases include:
-1. **Media capture** - Photo/video capture for visual project feedback (e.g., marked-up photos showing where welds should be added)
-2. Project organization (create projects, file notes into them)
-3. Task management with priorities and energy levels
+1. Project organization (create projects, file notes into them)
+2. Task management with priorities and energy levels
 3. Time tracking (start/stop timer, manual entry)
 4. Reflection system with guided prompts
 5. AI task recommendations ("what should I work on?")
